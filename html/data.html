@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+  stroke: #000;
+
+}
+
+.line {
+  fill: none;
+  stroke: darkred;
+  stroke-width: 1px;
+}
+
+.air_temp {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1px;
+}
+
+.bean_temp {
+  fill: none;
+  stroke: darkred;
+  stroke-width: 1px;
+}
+
+</style>
+
+<script src="http://d3js.org/d3.v3.js"></script>
+<script>
+
+
+var margin = {top: 100, right: 80, bottom: 30, left: 100},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+//var parseDate = d3.time.format("%X").parse;
+
+var x = d3.scale.linear()
+    .rangeRound([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+
+//Thermocouple indexes 
+var BEAN_TEMP_INDEX = 0;
+var AIR_TEMP_INDEX = 1;
+
+
+var bean_temp = d3.svg.line()
+    //.interpolate("basis")
+    .x(function(d) { return x(d.timer); })
+    //how can we return the temperature "if" the index is 0 or 1 or whatever?
+    .y(function(d) { 
+        
+       if ( d['thermocouple_index'] === BEAN_TEMP_INDEX && d['thermocouple_temp'] < 450 ) {
+          console.log( 'Bean temp: ' + d['thermocouple_temp']);
+          return y(d.thermocouple_temp); 
+        } 
+        return -1; 
+      });
+
+
+
+var air_temp = d3.svg.line()
+    //.interpolate("basis")
+    .x(function(d) { return x(d.timer); })
+    //how can we return the temperature "if" the index is 0 or 1 or whatever?
+    .y(function(d) { 
+        
+      if ( d['thermocouple_index'] === AIR_TEMP_INDEX && d['thermocouple_temp'] < 500) {
+          console.log( 'Air temp: ' + d['thermocouple_temp']);
+          return y(d.thermocouple_temp); 
+        } 
+        return -1; 
+      });
+
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.csv("logs/roast_buesaco2_72915.log", function(data) {
+   
+   /*
+	Format the data.
+	TODO: Normalize the data (quash anomolies)
+   */
+   return {
+    //date_time,ms,timer,thermocouple_index,thermocouple_temp
+    //coerce the raw csv string data to correct data type
+    date_time: data.date_time,
+    ms: +data.ms,
+    timer: +data.timer,
+    thermocouple_index: +data.thermocouple_index,
+    thermocouple_temp: +data.thermocouple_temp
+    //let's figure out how to grab this
+    //ambient_temp: +data.ambient_temp
+  };
+
+
+  }, 
+
+  //Use the parsed data
+  function(error, rows) {
+     //console.log(error);
+     console.log(rows);
+
+     //time domain
+     x.domain( [0, 1200] );
+     //temperature domain
+     y.domain( [0, 500] );
+
+
+
+// Render chart domain
+     svg.append("g")
+       .attr("class", "x axis")
+       .attr("transform", "translate(0," + height + ")")
+       .call(xAxis)
+     .append('text')
+       .style("text-anchor", "bottom")
+       .text('Time');
+
+     svg.append("g")
+       .attr("class", "y axis")
+       .call(yAxis)
+     .append("text")
+       .attr("translatesform", "rotate(-90)")
+       .attr("y", 6)
+       .attr("dy", ".71em")
+       .style("text-anchor", "end")
+       .text("Temp. (ºF)");
+
+// Render lines
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "bean_temp")
+      .attr("d", bean_temp);
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "air_temp")
+      .attr("d", air_temp);
+
+ 
+});
+
+</script>
