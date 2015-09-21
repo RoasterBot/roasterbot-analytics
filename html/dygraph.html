@@ -1,0 +1,76 @@
+<html>
+<head>
+<script type="text/javascript"
+  src="js/dygraph-combined-dev.js"></script>
+</head>
+<body>
+<br />
+<div id="graphdiv"
+  style="width:1000px; height:500px;"></div>
+<script type="text/javascript">
+  graph = new Dygraph(
+    document.getElementById("graphdiv"),
+    "../logs/08112015_muleskinner2.log", // path to 
+    {
+      //customBars: true,
+      labels: ['t','ambient','bean','air','tc2','tc3'],
+      animatedZooms: true,
+      stackedGraph: false,
+      title: 'Roast Curve - Martha\'s Blend; 08/20/2015',
+      ylabel: 'Temperature (F)',
+      xlabel: 'Time in seconds',
+      legend: 'always',
+      labelsDivStyles: { 'textAlign': 'left' },
+      drawPoints : true,
+      pointSize: 1,
+      
+
+      //errorBars:  true,
+      //valueRange: [-100,500] //max temp in roaster
+    }          // options
+  );
+
+  	var annotations = [
+  		{ series: "bean",
+          x: "220",
+          shortText: "Y+",
+          text: "Yellowing starts"},
+
+         { series: "bean",
+          x: "300",
+          shortText: "Br+",
+          text: "Browning starts"},
+
+  		{ series: "bean",
+          x: "560",
+          shortText: "1C+",
+          text: "First Crack Start"},
+
+        { series: "bean",
+          x: "680",
+          shortText: "1C-",
+          text: "First Crack Ends"},
+
+        { series: "bean",
+          x: "820",
+          shortText: "2C+",
+          text: "Second Crack Start"},
+
+        { series: "bean",
+          x: "860",
+          shortText: "Dr",
+          text: "Drop Time"},
+
+       { series: "air",
+          x: "600",
+          shortText: "*",
+          text: "Aroma is sweeter than previous batch."},
+
+
+  	];
+
+    graph.setAnnotations(annotations);
+  
+</script>
+</body>
+</html>

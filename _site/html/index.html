@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script>
+
+var logs = ['logs/roast_peru1_0802015.log','roast_buesaco2_72915.csv','roast_buesaco3_72915.log',
+ 'roast_marthasblend_72915.log',
+ 'roast_rwanda_72515.log',
+ 'roast_buesaco1_72915.log',
+ 'roast_buesaco_72515.log',
+ 'roast_mb2_72515.log',
+ 'roast_santabarbara_72515.log',
+ 'roast_buesaco2_72915.log',
+ 'roast_marthasblend2_72915.log',
+ 'roast_mb_72515.log'];
+
+var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+//var parseDate = d3.time.format("%X").parse;
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var line = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.time); })
+    .y(function(d) { return y(d.thermocouple_temp); });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+d3.csv(logs[0], function(data) {
+  
+  console.log( data[0] )
+  
+  //huh?
+  //color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date_time"; }));
+
+
+
+   return {
+    /*
+     date_time,ms,timer,thermocouple_index,thermocouple_temp
+     2015-07-29 22:36:09,149,0.0543079376221,0,352.720400
+     2015-07-29 22:36:09,149,0.0546641349792,1,429.257800
+      */
+     //coerce the raw csv string data to correct data type
+     date_time: Date.parse(data.date_time),
+     ms: +data.ms,
+     timer: +data.timer,
+     thermocouple_index: +data.thermocouple_index,
+     thermocouple_temp: +data.thermocouple_temp
+   };
+  }, 
+
+//Use the parsed data
+function(error, rows) {
+     
+    x.domain ( [0,1250] );  //temperature
+    y.domain ( [0,450] ); //seconds
+
+
+    // x.domain( d3.extent(rows, function(d) { return d.time; }));
+     //y.domain( d3.extent(rows, function(d) { return  d.thermocouple_temp; })); 
+     
+    console.log( d3.extent(rows, function(d) { return d.timer; }) );
+    console.log(  d3.extent(rows, function(d) { return d.thermocouple_temp; })  );
+ 
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("translatesform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Temperature (ºF)");
+
+
+//what's going on here?
+  var foo = svg.selectAll(".roast")
+      .data(rows)
+    .enter().append("g")
+      .attr("class", "roast");
+
+
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "line")
+      .attr("d", line);
+/**/
+
+// Scale should be fixed 0-20 minutes
+// 
+
+  foo.append("path")
+      .attr("class", "line")
+      .attr("d", function(d) { return d.time })  //line(d.values);
+      .style("stroke", function(d) { return color(d.thermocouple_temp); });
+
+  foo.append("text")
+      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
+      .attr("x", 3)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.name; });
+/**/
+});
+
+</script>
+
+

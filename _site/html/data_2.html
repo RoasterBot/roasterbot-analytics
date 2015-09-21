@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<h1 align="center">Red Ecolsierra</h1>
+<div align="center">
+<h3 align="left" style="width:400px;padding:10px;border:1px ridge silver">
+REGION: Santa Marta, Magdalena, Colombia<br>
+
+GROWER: La Red de Productores Ecológicos de la Sierra Nevada de Santa Marta (RED ECOLSIERRA)<br>
+
+ALTITUDE:  1,100 – 1,600 meters<br>
+
+PROCESS:  Fully washed and dried in the sun<br>
+
+VARIETY:  Caturra, Colombia, and Typica<br>
+
+HARVEST:  April-August December- February<br>
+
+SOIL: Clay minerals<br>
+
+CERTIFICATION:  Fair Trade Organic<br>
+</h3>
+</div>
+<h3 align="center"><a href="https://tastify.com/sample_reports/a2fbb31d-d7d5-40cb-829f-888c17346f05">Cupping Notes</a></h3>
+
+<h2 align="center">Sample Roast Curve</h2>
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+  stroke: #000;
+
+}
+
+.line {
+  fill: none;
+  stroke: darkred;
+  stroke-width: 1.5px;
+}
+
+.air_temp {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.bean_temp {
+  fill: none;
+  stroke: darkred;
+  stroke-width: 1.5px;
+}
+
+.ambient_temp {
+  fill: none;
+  stroke: silver;
+  stroke-width: 1.5px;
+}
+
+</style>
+
+<script src="http://d3js.org/d3.v3.js"></script>
+<script>
+
+
+var margin = {top: 100, right: 80, bottom: 30, left: 100},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+//var parseDate = d3.time.format("%X").parse;
+
+var x = d3.scale.linear()
+    .rangeRound([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+
+/*
+  Note: 'd' represents the raw csv data, not the rendered representation
+*/
+
+var ambient_temp = d3.svg.line()
+    //.interpolate("basis")
+    .x(function(d) {  return x(d['time']); })
+    //how can we return the temperature "if" the index is 0 or 1 or whatever?
+    .y(function(d) {  return y(d['ambient_temp']); });
+
+
+var bean_temp = d3.svg.line()
+    .interpolate("basis")
+    .x( function(d) { return x(d['time']); })
+    //how can we return the temperature "if" the index is 0 or 1 or whatever?
+    .y( function(d) { return y(d['bean_temp']); });
+
+
+var air_temp = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.time); })
+    //how can we return the temperature "if" the index is 0 or 1 or whatever?
+    .y(function(d) {  return y(d.air_temp); });
+
+
+//Append SVG element to the DOM/body
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.csv("logs/roast_RedEcolsierra_0802015.log", function(data) {
+   
+   /**
+	  TODO: Normalize the data (quash anomolies)
+   */
+   return {
+    // Map the data elements from the log file to the local
+    // representations.
+    // Coerce the raw csv string data to correct data type
+    time: data.time,
+    ambient_temp: +data.ambient_temp,
+    bean_temp: +data.thermocouple_0_temp,
+    air_temp: +data.thermocouple_1_temp
+  };
+
+
+  }, 
+
+  //Use the parsed data
+  function(error, rows) {
+     //console.log(error);
+     console.log(rows);
+
+     //time domain in seconds
+     x.domain( [0, 1200] );
+     //temperature domain (F)
+     y.domain( [0, 500] );
+
+
+
+// Render chart domain
+     svg.append("g")
+       .attr("class", "x axis")
+       .attr("transform", "translate(0," + height + ")")
+       .call(xAxis)
+     .append('text')
+       .style("text-anchor", "bottom")
+       .text('Time (secs)');
+
+     svg.append("g")
+       .attr("class", "y axis")
+       .call(yAxis)
+     .append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("y", 6)
+       .attr("dy", ".71em")
+       .style("text-anchor", "end")
+       .text("Temp. (ºF)");
+
+// Render lines
+
+
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "ambient_temp")
+      .attr("d", ambient_temp);
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "bean_temp")
+      .attr("d", bean_temp);
+
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "air_temp")
+      .attr("d", air_temp);
+/***/
+ 
+});
+
+</script>

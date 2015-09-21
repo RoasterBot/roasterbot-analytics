@@ -66,11 +66,7 @@ def TemperatureSensorTemperatureChanged(e):
 
 
 def toFarenheight(c):
-    # from MAX3865 code
-    # and http://www.almanac.com/temperature-conversion
-    #  temperature = (temperature * 9.0/5.0)+ 32;
-    #return c*2+30
-    return  c * (9.0/5.0)+ 32;
+    return c*2+30
 
 def log_temperatures():
 
