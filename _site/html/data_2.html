@@ -110,14 +110,15 @@ var ambient_temp = d3.svg.line()
 
 var bean_temp = d3.svg.line()
     .interpolate("basis")
-    .x( function(d) { return x(d['time']); })
+    .x( function(d) { return x(d['datetime']); })
     //how can we return the temperature "if" the index is 0 or 1 or whatever?
     .y( function(d) { return y(d['bean_temp']); });
 
+//console.log(bean_temp);
 
 var air_temp = d3.svg.line()
     .interpolate("basis")
-    .x(function(d) { return x(d.time); })
+    .x(function(d) { return x(d.datetime); })
     //how can we return the temperature "if" the index is 0 or 1 or whatever?
     .y(function(d) {  return y(d.air_temp); });
 
@@ -130,8 +131,8 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-d3.csv("logs/roast_RedEcolsierra_0802015.log", function(data) {
-   
+//d3.csv("logs/roast_RedEcolsierra_0802015.log", function(data) {
+   d3.csv("../logs/101215_yirg_1.log", function(data) {
    /**
 	  TODO: Normalize the data (quash anomolies)
    */
@@ -139,7 +140,7 @@ d3.csv("logs/roast_RedEcolsierra_0802015.log", function(data) {
     // Map the data elements from the log file to the local
     // representations.
     // Coerce the raw csv string data to correct data type
-    time: data.time,
+    date: data.datetime,
     ambient_temp: +data.ambient_temp,
     bean_temp: +data.thermocouple_0_temp,
     air_temp: +data.thermocouple_1_temp
@@ -181,7 +182,7 @@ d3.csv("logs/roast_RedEcolsierra_0802015.log", function(data) {
 
 // Render lines
 
-
+/**
 
   svg.append("path")
       .datum(rows)
@@ -198,7 +199,7 @@ d3.csv("logs/roast_RedEcolsierra_0802015.log", function(data) {
       .datum(rows)
       .attr("class", "air_temp")
       .attr("d", air_temp);
-/***/
+*/
  
 });
 

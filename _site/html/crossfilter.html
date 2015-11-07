@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body>
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+  stroke: #000;
+
+}
+
+.line {
+  fill: none;
+  stroke: darkred;
+  stroke-width: 1px;
+}
+
+.air_temp {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1px;
+}
+
+.bean_temp {
+  fill: none;
+  stroke: darkred;
+  stroke-width: 1px;
+}
+
+</style>
+
+
+
+<script src="js/d3.min.js"></script>	
+<script type="text/javascript" src="js/crossfilter.js"></script>
+
+
+<script type="text/javascript">
+
+//from index.html
+var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+//var parseDate = d3.time.format("%X").parse;
+
+var x = d3.scale.linear()
+    .range([0, width])
+    .domain( ['00:00','20:00'] );
+
+
+var y = d3.scale.linear()
+    .range([height, 0])
+    .domain( [0,600] );
+
+
+var color = d3.scale.category10();
+
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .ticks(20);
+
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+
+/*
+var line = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.time); })
+    .y(function(d) { return y(d.thermocouple_temp); });
+*/
+
+
+var bean_temp = d3.svg.line()
+    //.interpolate("basis")
+    .x(function(d) { return x(d.time); })
+    //how can we return the temperature "if" the index is 0 or 1 or whatever?
+    .y(function(d) { return d.bean_temp });
+
+
+
+var air_temp = d3.svg.line()
+    //.interpolate("basis")
+    .x(function(d) { return x(d.time); })
+    //how can we return the temperature "if" the index is 0 or 1 or whatever?
+    .y(function(d) { return d.air_temp });
+
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+
+//load the data	
+var d = d3.csv("../logs/092115_guat_antigua_fc.log", function(data) {
+   
+   /*
+	Format the data.
+	TODO: Normalize the data (quash anomolies)
+   */
+   return {
+    //date_time,ms,timer,thermocouple_index,thermocouple_temp
+    //coerce the raw csv string data to correct data type
+    //Time,Ambient,BeanTemp,AirTemp,thermocouple_2_temp,thermocouple_3_temp
+    time:  seconds_to_minutes(+data.time)	,
+    ambient: +data.ambient,
+    bean_temp: +data.bean,
+    air_temp: +data.air,
+    tc2: +data.thermocouple_2_temp,
+    tc3: +data.thermocouple_3_temp
+    
+  };
+
+  }, function(error, rows) {
+      //console.log(error);
+      console.log(rows);
+      
+
+      //Now we should be ready to use the parsed rows
+
+
+      //this is what we had in index.html
+
+       //x.domain ( [0,500] );  //temperature
+       //y.domain ( [0,500] ); //seconds
+
+
+    //x.domain( d3.extent(rows, function(d) { return d.time; }));
+    //y.domain( d3.extent(rows, function(d) { return  d.bean_temp; })); 
+  // x.domain( ['00:00', '16:00'] ); 
+   //y.domain ( [0, 600] ); //F
+
+
+    console.log(  d3.extent(rows, function(d) { return d.time; }) );
+    console.log(  d3.extent(rows, function(d) { return d.bean_temp; })  );
+
+    //console.log( x.domain ); 
+    //console.log( y.domain ); 
+
+ 
+
+// Render chart domain
+    svg.append("g")
+       .attr("class", "x axis")
+       .attr("transform", "translate(0," + height + ")")
+       .call(xAxis)
+     .append('text')
+       .attr("x", 6)
+       .attr("dx", ".71em")
+       .style("text-anchor", "bottom")
+       .text('Time');
+
+
+
+     svg.append("g")
+       .attr("class", "y axis")
+       .call(yAxis)
+     .append("text")
+       .attr("translatesform", "rotate(90)")
+       .attr("y", 6)
+       .attr("dy", ".71em")
+       .style("text-anchor", "end")
+       .text("Temp. (ºF)");
+
+
+
+      // Render lines
+
+
+/* 
+
+
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "bean_temp")
+      .attr("d", bean_temp);
+
+  svg.append("path")
+      .datum(rows)
+      .attr("class", "air_temp")
+      .attr("d", air_temp);
+
+
+*/
+
+
+}); //end D3
+
+
+// good function for unit test!
+var seconds_to_minutes = function(_time){
+	var mins = Math.floor(_time / 60);
+    var seconds = _time - mins  * 60;
+    if( String(seconds).length === 1) seconds = '0' + seconds;
+	return String(mins + ':' + seconds);
+	// String(Math.floor(+data.time / 60)) + ':' + 
+	// String(+data.time - Math.floor(+data.time / 60) * 60 
+}
+
+var data = [
+  {date: "2011-11-14T16:17:54Z", quantity: 2, total: 190, tip: 100, type: "tab"},
+  {date: "2011-11-14T16:20:19Z", quantity: 2, total: 190, tip: 100, type: "tab"},
+  {date: "2011-11-14T16:28:54Z", quantity: 1, total: 300, tip: 200, type: "visa"},
+  {date: "2011-11-14T16:30:43Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+  {date: "2011-11-14T16:48:46Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+  {date: "2011-11-14T16:53:41Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+  {date: "2011-11-14T16:54:06Z", quantity: 1, total: 100, tip: 0, type: "cash"},
+  {date: "2011-11-14T16:58:03Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+  {date: "2011-11-14T17:07:21Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+  {date: "2011-11-14T17:22:59Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+  {date: "2011-11-14T17:25:45Z", quantity: 2, total: 200, tip: 0, type: "cash"},
+  {date: "2011-11-14T17:29:52Z", quantity: 1, total: 200, tip: 100, type: "visa"}
+]; 
+
+var ndx = crossfilter(data);
+var totalDim = ndx.dimension(function(d) { return d.total; });   
+var total_90 = totalDim.filter(90); 
+
+print_filter("total_90"); 
+
+
+function print_filter(filter){
+	var f=eval(filter);
+	if (typeof(f.length) != "undefined") {}else{}
+	if (typeof(f.top) != "undefined") {f=f.top(Infinity);}else{}
+	if (typeof(f.dimension) != "undefined") {f=f.dimension(function(d) { return "";}).top(Infinity);}else{}
+	console.log(filter+"("+f.length+") = "+JSON.stringify(f).replace("[","[\n\t").replace(/}\,/g,"},\n\t").replace("]","\n]"));
+} 	
+
+</script>
+
+
+</body>

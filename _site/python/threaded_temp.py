@@ -18,7 +18,6 @@ from time import sleep
 from Phidgets.Phidget import PhidgetLogLevel
 
 
-
 #Information Display Function
 def DisplayDeviceInfo():
     inputCount = temperatureSensor.getTemperatureInputCount()
@@ -66,7 +65,11 @@ def TemperatureSensorTemperatureChanged(e):
 
 
 def toFarenheight(c):
-    return c*2+30
+    # from MAX3865 code
+    # and http://www.almanac.com/temperature-conversion
+    #  temperature = (temperature * 9.0/5.0)+ 32;
+    #return c*2+30
+    return  c * (9.0/5.0)+ 32;
 
 def log_temperatures():
 
@@ -117,9 +120,11 @@ if __name__ == '__main__':
     # Will need multiple "time markers" or events: Roaster warm up, drop, 1c, etc. 
     start_time = time.time()
     #need to generate unique file name for each roast ...?
-    logging.basicConfig(format='%(message)s',filename='roast.log',filemode='w',level=logging.DEBUG)
+    #logging.basicConfig(format='%(asctime)s,%(message)s',filename='roast.log',filemode='w',level=logging.DEBUG)
+
+    logging.basicConfig(format='%(asctime)s,%(message)s',filename='roast.log',filemode='w',level=logging.DEBUG)
     # Format, date, thermocouple, time, thermocouple temp, ambient temp at device
-    logging.info("time,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp")
+    logging.info("datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp")
 
     #Create an temperaturesensor object
     try:
