@@ -123,9 +123,11 @@ if __name__ == '__main__':
     #logging.basicConfig(format='%(asctime)s,%(message)s',filename='roast.log',filemode='w',level=logging.DEBUG)
 
     logging.basicConfig(format='%(asctime)s,%(message)s',filename='roast.log',filemode='w',level=logging.DEBUG)
+
+    #logging.basicConfig(format='%(message)s',filename='roast.log',filemode='w',level=logging.DEBUG)
     # Format, date, thermocouple, time, thermocouple temp, ambient temp at device
     logging.info("datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp")
-
+    
     #Create an temperaturesensor object
     try:
         print 'creating temp sensor'

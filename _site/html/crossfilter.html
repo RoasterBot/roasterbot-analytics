@@ -114,7 +114,7 @@ var svg = d3.select("body").append("svg")
 
 
 //load the data	
-var d = d3.csv("../logs/092115_guat_antigua_fc.log", function(data) {
+var d = d3.csv("../logs/112211_costa_rica_1.log", function(data) {
    
    /*
 	Format the data.
@@ -124,12 +124,16 @@ var d = d3.csv("../logs/092115_guat_antigua_fc.log", function(data) {
     //date_time,ms,timer,thermocouple_index,thermocouple_temp
     //coerce the raw csv string data to correct data type
     //Time,Ambient,BeanTemp,AirTemp,thermocouple_2_temp,thermocouple_3_temp
-    time:  seconds_to_minutes(+data.time)	,
-    ambient: +data.ambient,
-    bean_temp: +data.bean,
-    air_temp: +data.air,
-    tc2: +data.thermocouple_2_temp,
-    tc3: +data.thermocouple_3_temp
+
+    //datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp
+    datetime:  +data.datetime,
+    //ms:  +data.ms,
+    //seconds:  +data.seconds ,
+    //ambient: +data.ambient,
+    //bean_temp: +data.thermocouple_0_temp,
+    //air_temp: +data.thermocouple_1_temp,
+    //tc2: +data.thermocouple_2_temp,
+    //tc3: +data.thermocouple_3_temp
     
   };
 

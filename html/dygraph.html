@@ -13,13 +13,14 @@
     //"../logs/08112015_muleskinner2.log", // path to 
     //"../logs/091615_columbia_supremo.log",
     //"../logs/092115_guat_antigua_fc .log",
+      "../logs/101215_yirg_1.log",
     
-    "../logs/101215_yirg_1.log",
+    "../logs/112211_costa_rica_1.log",
     {
       //customBars: true,
       //labels: ['t','ambient','bean','air','tc2','tc3'],
       //datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp
-      labels: ['datetime','ms','seconds','ambient','bean','air','tc2','tc3'],
+      //labels: ['datetime','ms','seconds','ambient','bean','air','tc2','tc3'],
       animatedZooms: true,
       stackedGraph: false,
       title: 'Roast Curve - (see code for bean info)',
@@ -27,12 +28,13 @@
       xlabel: 'Time in seconds',
       legend: 'always',
       labelsDivStyles: { 'textAlign': 'left' },
-      drawPoints : true,
+      drawPoints : false,
       pointSize: 1,
+      //customBars: true,
       
 
       //errorBars:  true,
-      //valueRange: [-100,500] //max temp in roaster
+      valueRange: [100,500] //max temp in roaster
     }          // options
   );
 
@@ -76,7 +78,7 @@
 
   	];
 */
-    graph.setAnnotations(annotations);
+   // graph.setAnnotations(annotations);
   
 </script>
 </body>
