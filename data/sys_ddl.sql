@@ -39,28 +39,46 @@ create table Bean (
 );
 
 
+drop table RoastLog;
+
+CREATE TABLE RoastLog (
+    id INTEGER PRIMARY KEY,
+    time_stamp TIMESTAMP,
+    seconds INTEGER NULL,
+    batch_id INTEGER NULL,
+    bean_id INTEGER NULL,
+    bean_description varchar(56) NULL,
+    ambient_temp INTEGER,
+    bean_temp INTEGER,
+    air_temp INTEGER,
+    thermocouple_2_temp  INTEGER NULL,
+    thermocouple_3_temp  INTEGER NULL,
+    notes TEXT NULL
+  );
+
+/* --- future state
 create table RoastLog (
  	id INTEGER PRIMARY KEY, 
   	batch_id INTEGER,
   	roaster_id INTEGER,
-  	/*roaster_operator_id INTEGER FOREIGN KEY,*/
+  	roaster_operator_id INTEGER FOREIGN KEY
   	order_reference varchar(56),
   	bean_id INTEGER,
   	time_stamp TIMESTAMP,
-  	/* event_id INTEGER FOREIGN KEY, to do */
+  	event_id INTEGER FOREIGN KEY, 
   	air_temp INTEGER,
   	bean_temp INTEGER,
   	ambient_temp INTEGER,
   	other_temp1  INTEGER NULL,
   	other_temp2  INTEGER NULL,
-  	other_metric  INTEGER NULL, /*  E.g., gas pressure   */
+  	gas_preasure  INTEGER NULL,
 
   	FOREIGN KEY(roaster_id) REFERENCES Roaster(id),
   	FOREIGN KEY(bean_id) REFERENCES Bean(id)
 
 
   	);
-
+---- */
 
 
 COMMIT;
