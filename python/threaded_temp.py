@@ -179,6 +179,10 @@ if __name__ == '__main__':
     start_threads()
 
     chr = sys.stdin.read(1)
+    ## Perhaps here we can grab other characters and log different data, such as 1c, 2c, drop, etc.
+    ## Write the desired data to log file, then once that's defined, write to db.
+
+
     print("Closing...")
 
     try:
