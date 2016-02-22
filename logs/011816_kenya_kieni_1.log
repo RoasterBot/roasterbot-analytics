@@ -1,4 +1,4 @@
-2016-01-18 19:09:38,392,datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp
+datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp
 2016-01-18 19:09:43,441,5,68,445,400,789,789
 2016-01-18 19:09:44,442,6,68,433,394,789,789
 2016-01-18 19:09:45,448,7,68,421,388,789,789
