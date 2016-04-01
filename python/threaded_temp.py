@@ -15,6 +15,7 @@ from Phidgets.Events.Events import AttachEventArgs, DetachEventArgs, ErrorEventA
 from Phidgets.Devices.TemperatureSensor import TemperatureSensor, ThermocoupleType
 #import methods for sleeping thread
 from time import sleep
+import sqlite3
 from Phidgets.Phidget import PhidgetLogLevel
 
 
@@ -71,6 +72,8 @@ def toFarenheight(c):
     #return c*2+30
     return  c * (9.0/5.0)+ 32;
 
+
+
 def log_temperatures():
 
     print 'logging'
@@ -98,12 +101,15 @@ def log_temperatures():
                                 air_temp, tbd_1_temp, tbd_2_temp ))
     logging.info( "%d,%d,%d,%d,%d,%d" % (c_time, ambient_temp, bean_temp, \
                                 air_temp, tbd_1_temp, tbd_2_temp ))
+    ## This is where we do simple insert statements
 
     return 0
     
 
 
 def start_threads():
+    print ( coffee )
+
     t = threading.Timer(1.0, start_threads)
     t.daemon = True
     t.start()
@@ -116,6 +122,7 @@ def start_threads():
 
 if __name__ == '__main__':
     print 'in main().'
+    coffee = raw_input('Which coffee are you roasting?  ')
     #The begining of the roast
     # Will need multiple "time markers" or events: Roaster warm up, drop, 1c, etc. 
     start_time = time.time()
@@ -126,8 +133,10 @@ if __name__ == '__main__':
 
     #logging.basicConfig(format='%(message)s',filename='roast.log',filemode='w',level=logging.DEBUG)
     # Format, date, thermocouple, time, thermocouple temp, ambient temp at device
-    logging.info("datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp")
+    logging.info("coffee,datetime,ms,seconds,ambient_temp,thermocouple_0_temp,thermocouple_1_temp,thermocouple_2_temp,thermocouple_3_temp")
     
+
+
     #Create an temperaturesensor object
     try:
         print 'creating temp sensor'
@@ -170,11 +179,10 @@ if __name__ == '__main__':
 
     print("Setting sensitivity of the thermocouple....")
     temperatureSensor.setTemperatureChangeTrigger(0, 0.10)
-    sleep(5) #sleep for 5 seconds
+    sleep(2) #sleep for 2 seconds
     print("Sensitivity of thermocouple index 0 is now %f" % (temperatureSensor.getTemperatureChangeTrigger(0)))
 
     print("Press Enter to quit....")
-
 
     start_threads()
 
