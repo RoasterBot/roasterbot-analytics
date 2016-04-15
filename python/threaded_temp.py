@@ -108,8 +108,7 @@ def log_temperatures():
 
 
 def start_threads():
-    print ( coffee )
-
+    
     t = threading.Timer(1.0, start_threads)
     t.daemon = True
     t.start()
